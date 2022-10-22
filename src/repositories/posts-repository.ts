@@ -42,7 +42,8 @@ export const postsRepository = {
 
     const post = postsRepository.findPostById(id)
 
-    if (data.blogId) {
+    if (post && data.blogId) {
+
       const blog = blogsRepository.findBlogById(data.blogId)
 
       if (blog) {
@@ -51,9 +52,12 @@ export const postsRepository = {
       } else {
         return false
       }
+
     } else {
       return false
     }
+
+
   },
 
   deletePost: (id: string) => {
