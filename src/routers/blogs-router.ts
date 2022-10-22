@@ -39,7 +39,7 @@ blogsRouter.put('/:id', (req: Request, res: Response) => {
   }
 })
 
-blogsRouter.delete('/:id', (req: Request, res: Response) => {
+blogsRouter.delete('/:id',  authMiddleware, (req: Request, res: Response) => {
   const isDeleted = blogsRepository.deleteBlog(req.params.id)
   if (isDeleted) {
     res.send(204)

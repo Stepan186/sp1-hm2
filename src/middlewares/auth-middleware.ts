@@ -7,7 +7,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 
 
 
-  if (authorization && authorization[1] === validAuth) {
+  if (authorization && (authorization[1] === validAuth)) {
    next()
   } else {
     res.sendStatus(401)
