@@ -29,7 +29,7 @@ blogsRouter.post('/', authMiddleware, nameValidator, youtubeUrlValidator, inputV
   res.status(201).send(newBlog)
 })
 
-blogsRouter.put('/:id', (req: Request, res: Response) => {
+blogsRouter.put('/:id', authMiddleware, nameValidator, youtubeUrlValidator, inputValidatorMiddleware, (req: Request, res: Response) => {
   const data = req.body
   const isUpdated = blogsRepository.updateBlog(req.params.id, data)
   if (isUpdated) {
