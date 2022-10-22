@@ -7,6 +7,7 @@ import {
   shortDescriptionValidation,
   titileValidation
 } from "../middlewares/posts-middleware";
+import { inputValidatorMiddleware } from "../middlewares/blogs-middleware";
 
 export const postsRouter = Router({})
 
@@ -26,19 +27,19 @@ postsRouter.get('/:id', (req: Request, res: Response) => {
 })
 
 postsRouter.post('/', authMiddleware, titileValidation,
-  shortDescriptionValidation, contentValidation, blogIdValidation,   (req: Request, res: Response) => {
+  shortDescriptionValidation, contentValidation, blogIdValidation,inputValidatorMiddleware,   (req: Request, res: Response) => {
   const data: PostsInterface = req.body
   const newPost = postsRepository.createPost(data)
 
   if (newPost) {
-    res.send(newPost)
+    res.status(201).send(newPost)
   } else {
     res.sendStatus(404)
   }
 })
 
 postsRouter.put('/:id', authMiddleware, titileValidation,
-  shortDescriptionValidation, contentValidation, blogIdValidation, (req: Request, res: Response) => {
+  shortDescriptionValidation, contentValidation, blogIdValidation, inputValidatorMiddleware, (req: Request, res: Response) => {
 
   const data = req.body
 

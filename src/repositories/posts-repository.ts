@@ -57,14 +57,16 @@ export const postsRepository = {
   },
 
   deletePost: (id: string) => {
+    let isDeleted = false
 
-    const post = posts.findIndex((v :{id: string}) => v.id === id)
-
-    if (post){
-      posts.splice(post, 1)
-      return true
-    } else {
-      return false
+    for (let i = 0; i < posts.length; i++) {
+      if (posts[i].id === id) {
+        posts.splice(i, 1)
+        isDeleted = true
+        break
+      }
     }
+
+    return isDeleted
   }
 }
