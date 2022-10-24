@@ -12,6 +12,7 @@ export const youtubeUrlValidator = body('youtubeUrl')
   .isString()
   .bail()
   .trim()
+  .isLength({max: 100})
   .bail()
   .matches(`^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$`)
 
