@@ -1,19 +1,27 @@
 import { body, validationResult } from "express-validator";
 import { NextFunction, Request, Response } from "express";
 
-export const nameValidator = body('name').trim().isString().isLength({min: 1, max: 15}).withMessage({
-  "message": "name must be a sting and max length 15",
-  "field": "name"
-})
-export const youtubeUrlValidator = body('youtubeUrl').trim().isString().isLength({max: 100, min: 1}).withMessage({
-  "message": "youtubeUrl must be a sting and max length 100",
-  "field": "youtubeUrl"
-})
+export const nameValidator = body('name')
+  .isString()
+  .trim()
+  .isLength({min: 1, max: 15})
+
+
+export const youtubeUrlValidator = body('youtubeUrl')
+  .isString()
+  .isLength({max: 100, min: 1})
+  .matches(`^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$`)
+
 
 export const inputValidatorMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const error = validationResult(req)
   if (!error.isEmpty()) {
-    res.status(400).json({errorsMessages: error.array()})
+
+    const newError = error.array().map((value)=> {
+      return {message: value.msg, field: value.param}
+    })
+
+    res.status(400).json({errorsMessages: newError})
     return
   } else {
     next()
