@@ -2,17 +2,18 @@ import { body, validationResult } from "express-validator";
 import { NextFunction, Request, Response } from "express";
 
 export const nameValidator = body('name')
-  .trim()
   .isString()
+  .bail()
+  .trim()
   .isLength({min: 1, max: 15})
 
 
 export const youtubeUrlValidator = body('youtubeUrl')
-  .trim()
   .isString()
-  .isLength({max: 100, min: 1})
+  .bail()
+  .trim()
+  .bail()
   .matches(`^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$`)
-
 
 export const inputValidatorMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const error = validationResult(req)
