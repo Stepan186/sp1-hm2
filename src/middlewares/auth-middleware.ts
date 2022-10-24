@@ -2,17 +2,13 @@ import { NextFunction, Request, Response } from "express";
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
 
-  const authorization = req.header('authorization')
-  const validAuth = "Basic" + " " + btoa('admin' + ":" + 'qwerty')
-
-  console.log(validAuth);
-  console.log(authorization);
-
-
+  const authorization = req.header("authorization");
+  const validAuth = "Basic" + " " + btoa("admin" + ":" + "qwerty");
+  // const validAuth = "Basic" + " " + btoa( + ":" + 'qwerty')
 
   if (authorization && (authorization === validAuth)) {
-   next()
+    next();
   } else {
-    res.sendStatus(401)
+    res.sendStatus(401);
   }
-}
+};

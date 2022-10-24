@@ -1,32 +1,35 @@
-import { body, validationResult } from "express-validator";
+import { body, param, validationResult } from "express-validator";
 import { NextFunction, Request, Response } from "express";
 
-export const nameValidator = body('name')
+export const nameValidator = body("name")
   .isString()
   .bail()
   .trim()
-  .isLength({min: 1, max: 15})
+  .isLength({ min: 1, max: 15 });
 
 
-export const youtubeUrlValidator = body('youtubeUrl')
+export const youtubeUrlValidator = body("youtubeUrl")
   .isString()
   .bail()
   .trim()
-  .isLength({max: 100})
+  .isLength({ max: 100 })
   .bail()
-  .matches(`^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$`)
+  .matches(`^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$`);
 
 export const inputValidatorMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  const error = validationResult(req)
+  const error = validationResult(req);
   if (!error.isEmpty()) {
 
-    const newError = error.array().map((value)=> {
-      return {message: value.msg, field: value.param}
-    })
+    const newError = error.array().map((value) => {
+      return { message: value.msg, field: value.param };
+    });
 
-    res.status(400).json({errorsMessages: newError})
-    return
+    res.status(400).json({ errorsMessages: newError });
+    return;
   } else {
-    next()
+    next();
   }
-}
+};
+
+
+export const idValidation = param('id').isLength({max: 5})

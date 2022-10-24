@@ -1,5 +1,5 @@
-import express, {Request, Response} from "express"
-import { testingRouter, videosRouter } from "./routers/videos-router";
+import express from "express"
+import { testingRouter} from "./routers/testing-router";
 import bodyParser from "body-parser";
 import { blogsRouter } from "./routers/blogs-router";
 import { postsRouter } from "./routers/posts-router";

@@ -1,24 +1,24 @@
 import { blogsRepository } from "./blogs-repository";
 import { v4 } from "uuid";
 
-const posts: Array<PostsInterface> = []
+export const posts: Array<PostsInterface> = [];
 
 export const postsRepository = {
   findPosts: () => {
-    return posts
+    return posts;
   },
 
   findPostById: (id: string) => {
-    const post = posts.find((v: {id: string}) => v.id === id)
+    const post = posts.find((v: {id: string}) => v.id === id);
     if (post) {
-      return post
+      return post;
     } else {
-      return false
+      return false;
     }
   },
 
   createPost: (data: PostsInterface) => {
-    const blog = blogsRepository.findBlogById(data.blogId)
+    const blog = blogsRepository.findBlogById(data.blogId);
 
     if (blog) {
       const newPost: PostsInterface = {
@@ -28,49 +28,49 @@ export const postsRepository = {
         content: data.content,
         blogId: data.blogId,
         blogName: blog.name
-      }
+      };
 
-      posts.push(newPost)
+      posts.push(newPost);
 
-      return newPost
+      return newPost;
     } else {
-      return false
+      return false;
     }
   },
 
   updatePost: (id: string, data: PostUpdateInterface) => {
 
-    const post = postsRepository.findPostById(id)
+    const post = postsRepository.findPostById(id);
 
     if (post && data.blogId) {
 
-      const blog = blogsRepository.findBlogById(data.blogId)
+      const blog = blogsRepository.findBlogById(data.blogId);
 
       if (blog) {
-        Object.assign(post, {...data})
-        return true
+        Object.assign(post, { ...data });
+        return true;
       } else {
-        return false
+        return false;
       }
 
     } else {
-      return false
+      return false;
     }
 
 
   },
 
   deletePost: (id: string) => {
-    let isDeleted = false
+    let isDeleted = false;
 
     for (let i = 0; i < posts.length; i++) {
       if (posts[i].id === id) {
-        posts.splice(i, 1)
-        isDeleted = true
-        break
+        posts.splice(i, 1);
+        isDeleted = true;
+        break;
       }
     }
 
-    return isDeleted
+    return isDeleted;
   }
-}
+};

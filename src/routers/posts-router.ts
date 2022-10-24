@@ -9,56 +9,56 @@ import {
 } from "../middlewares/posts-middleware";
 import { inputValidatorMiddleware } from "../middlewares/blogs-middleware";
 
-export const postsRouter = Router({})
+export const postsRouter = Router({});
 
-postsRouter.get('/', (req: Request, res: Response) => {
-  const posts = postsRepository.findPosts()
-  res.send(posts)
-})
+postsRouter.get("/", (req: Request, res: Response) => {
+  const posts = postsRepository.findPosts();
+  res.send(posts);
+});
 
-postsRouter.get('/:id', (req: Request, res: Response) => {
-  const post = postsRepository.findPostById(req.params.id)
+postsRouter.get("/:id", (req: Request, res: Response) => {
+  const post = postsRepository.findPostById(req.params.id);
 
   if (post) {
-    res.send(post)
+    res.send(post);
   } else {
-    res.sendStatus(404)
+    res.sendStatus(404);
   }
-})
+});
 
-postsRouter.post('/', authMiddleware, titileValidation,
-  shortDescriptionValidation, contentValidation, blogIdValidation,inputValidatorMiddleware,   (req: Request, res: Response) => {
-  const data: PostsInterface = req.body
-  const newPost = postsRepository.createPost(data)
+postsRouter.post("/", authMiddleware, titileValidation,
+  shortDescriptionValidation, contentValidation, blogIdValidation, inputValidatorMiddleware, (req: Request, res: Response) => {
+    const data: PostsInterface = req.body;
+    const newPost = postsRepository.createPost(data);
 
-  if (newPost) {
-    res.status(201).send(newPost)
-  } else {
-    res.sendStatus(404)
-  }
-})
+    if (newPost) {
+      res.status(201).send(newPost);
+    } else {
+      res.sendStatus(404);
+    }
+  });
 
-postsRouter.put('/:id', authMiddleware, titileValidation,
+postsRouter.put("/:id", authMiddleware, titileValidation,
   shortDescriptionValidation, contentValidation, blogIdValidation, inputValidatorMiddleware, (req: Request, res: Response) => {
 
-  const data = req.body
+    const data = req.body;
 
-  const isUpdated = postsRepository.updatePost(req.params.id, data)
+    const isUpdated = postsRepository.updatePost(req.params.id, data);
 
-  if (isUpdated) {
-    res.sendStatus(204)
-  } else {
-    res.sendStatus(404)
-  }
+    if (isUpdated) {
+      res.sendStatus(204);
+    } else {
+      res.sendStatus(404);
+    }
 
-})
+  });
 
 
-postsRouter.delete('/:id', authMiddleware, (req: Request, res: Response) => {
-  const isDelited = postsRepository.deletePost(req.params.id)
+postsRouter.delete("/:id", authMiddleware, (req: Request, res: Response) => {
+  const isDelited = postsRepository.deletePost(req.params.id);
   if (isDelited) {
-    res.sendStatus(204)
+    res.sendStatus(204);
   } else {
-    res.sendStatus(404)
+    res.sendStatus(404);
   }
-})
+});
