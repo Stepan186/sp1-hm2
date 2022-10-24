@@ -10,6 +10,8 @@ export const contentValidation = body('content').isString().bail().trim().isLeng
 export const blogIdValidation = body('blogId').trim().isUUID().custom((value, {req}) => {
   if (!blogsRepository.findBlogById(value)) {
     throw new Error('bloId does not exist')
+  } else {
+    return true
   }
 })
 
