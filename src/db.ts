@@ -2,8 +2,8 @@ import { MongoClient, ServerApiVersion } from "mongodb";
 import * as dotenv from 'dotenv'
 dotenv.config()
 
-const uri = process.env.mongoURI
-
+const uri = process.env.MONGO_URI
+// const uri = "mongodb+srv://stepan:test@test.nzcc6xg.mongodb.net/?retryWrites=true&w=majority"
 if (!uri) {
   throw Error('mongo uri error')
 }
@@ -12,7 +12,6 @@ const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
 const db = client.db('incubator')
 export const blogsCollection = db.collection<BlogInterface>("blogs")
 export const postsCollection = db.collection<PostsInterface>("posts")
-
 
 export async function runDb() {
   try {
