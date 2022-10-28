@@ -1,11 +1,10 @@
 import { Request, Response, Router } from "express";
-import { blogs } from "../repositories/blogs/blogs-in-memory-repository";
-import { posts } from "../repositories/posts/posts-in-memory-repository";
+import { blogsCollection, postsCollection } from "../db";
 
 export const testingRouter = Router({});
 
-testingRouter.delete("/all-data", (req: Request, res: Response) => {
-  blogs.length = 0
-  posts.length = 0
+testingRouter.delete("/all-data", async (req: Request, res: Response) => {
+  await postsCollection.drop()
+  await blogsCollection.drop()
   res.sendStatus(204);
 });
