@@ -19,7 +19,7 @@ export const postsRepository = {
       content: data.content,
       blogId: data.blogId,
       blogName: data.blogName,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toString()
     };
 
     await postsCollection.insertOne(newPost)
@@ -29,7 +29,7 @@ export const postsRepository = {
 
   async updatePost(id: string, data: PostUpdateInterface): Promise<boolean> {
 
-    const result = await postsCollection.updateOne({ _id: new ObjectId(id) }, { data })
+    const result = await postsCollection.updateOne({ _id: new ObjectId(id) }, { ...data })
     return result.matchedCount === 1
 
   },

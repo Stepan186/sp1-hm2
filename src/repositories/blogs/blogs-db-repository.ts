@@ -1,6 +1,6 @@
 import { v4 } from "uuid";
 import { blogsCollection } from "../../db";
-import { ObjectID, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 
 export const blogsRepository = {
 
@@ -20,14 +20,14 @@ export const blogsRepository = {
   },
 
  async createBlog (data: BlogCreateInterface) : Promise<BlogInterface> {
-    const newBlog = { name: data.name, youtubeUrl: data.youtubeUrl, createdAt: new Date().toISOString()};
+    const newBlog = { id: v4(), name: data.name, youtubeUrl: data.youtubeUrl, createdAt: new Date().toString()};
     await blogsCollection.insertOne(newBlog)
     return newBlog
 
   },
 
  async updateBlog (id: string, data: BlogUpdateInterface): Promise<boolean> {
-    const result = await blogsCollection.updateOne({_id: new ObjectId(id)}, {$set: {data}})
+    const result = await blogsCollection.updateOne({_id: new ObjectId(id)}, {$set: {...data}})
     return result.matchedCount === 1
   },
 
