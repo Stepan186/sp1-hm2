@@ -1,6 +1,13 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
+import * as dotenv from 'dotenv'
+dotenv.config()
 
-const uri = "mongodb+srv://stepan:test@test.nzcc6xg.mongodb.net/?retryWrites=true&w=majority"
+const uri = process.env.mongoURI
+
+if (!uri) {
+  throw Error('mongo uri error')
+}
+
 const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
 const db = client.db('incubator')
 export const blogsCollection = db.collection<BlogInterface>("blogs")
@@ -9,9 +16,7 @@ export const postsCollection = db.collection<PostsInterface>("posts")
 
 export async function runDb() {
   try {
-    console.log('before');
     await client.connect();
-    console.log('after');
     await client.db("incubator").command({ ping: 1 });
     console.log("Connect successfully to mongo server");
 
