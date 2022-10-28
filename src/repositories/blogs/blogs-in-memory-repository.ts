@@ -19,7 +19,7 @@ export const blogsRepository = {
   },
 
   createBlog: (data: BlogCreateInterface) => {
-    const newBlog = { id: v4(), name: data.name, youtubeUrl: data.youtubeUrl };
+    const newBlog = { id: v4(), name: data.name, youtubeUrl: data.youtubeUrl, createdAt: new Date().toISOString() };
     blogs.push(newBlog);
     return newBlog;
   },

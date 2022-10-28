@@ -1,5 +1,4 @@
 import { Request, Response, Router } from "express";
-import { blogsRepository } from "../repositories/blogs-repository";
 import {
   idValidation,
   inputValidatorMiddleware,
@@ -7,18 +6,18 @@ import {
   youtubeUrlValidator
 } from "../middlewares/blogs-middleware";
 import { authMiddleware } from "../middlewares/auth-middleware";
+import { blogsRepository } from "../repositories/blogs/blogs-db-repository";
 
 export const blogsRouter = Router({});
 
-
-blogsRouter.get("/", (req: Request, res: Response) => {
-  const blogs = blogsRepository.findBlogs();
+blogsRouter.get("/", async (req: Request, res: Response) => {
+  const blogs = await blogsRepository.findBlogs();
   res.send(blogs);
 });
 
-blogsRouter.get("/:id", idValidation, inputValidatorMiddleware, (req: Request, res: Response) => {
+blogsRouter.get("/:id", async (req: Request, res: Response) => {
 
-  const blog = blogsRepository.findBlogById(req.params.id);
+  const blog = await blogsRepository.findBlogById(req.params.id);
 
   if (blog) {
     res.send(blog);
@@ -28,15 +27,15 @@ blogsRouter.get("/:id", idValidation, inputValidatorMiddleware, (req: Request, r
 
 });
 
-blogsRouter.post("/", authMiddleware, nameValidator, youtubeUrlValidator, inputValidatorMiddleware, (req: Request, res: Response) => {
+blogsRouter.post("/", authMiddleware, nameValidator, youtubeUrlValidator, inputValidatorMiddleware, async (req: Request, res: Response) => {
   const data = req.body;
-  const newBlog = blogsRepository.createBlog(data);
+  const newBlog = await blogsRepository.createBlog(data);
   res.status(201).send(newBlog);
 });
 
-blogsRouter.put("/:id", authMiddleware, nameValidator, youtubeUrlValidator, inputValidatorMiddleware, (req: Request, res: Response) => {
+blogsRouter.put("/:id", authMiddleware, nameValidator, youtubeUrlValidator, inputValidatorMiddleware, async (req: Request, res: Response) => {
   const data = req.body;
-  const isUpdated = blogsRepository.updateBlog(req.params.id, data);
+  const isUpdated = await blogsRepository.updateBlog(req.params.id, data);
   if (isUpdated) {
     res.send(204);
   } else {
@@ -44,8 +43,8 @@ blogsRouter.put("/:id", authMiddleware, nameValidator, youtubeUrlValidator, inpu
   }
 });
 
-blogsRouter.delete("/:id", authMiddleware, (req: Request, res: Response) => {
-  const isDeleted = blogsRepository.deleteBlog(req.params.id);
+blogsRouter.delete("/:id", authMiddleware, async (req: Request, res: Response) => {
+  const isDeleted = await blogsRepository.deleteBlog(req.params.id);
   if (isDeleted) {
     res.send(204);
   } else {

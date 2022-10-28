@@ -1,5 +1,5 @@
-import { blogsRepository } from "./blogs-repository";
 import { v4 } from "uuid";
+import { blogsRepository } from "../blogs/blogs-in-memory-repository";
 
 export const posts: Array<PostsInterface> = [];
 
@@ -18,7 +18,7 @@ export const postsRepository = {
   },
 
   createPost: (data: PostsInterface) => {
-    const blog = blogsRepository.findBlogById(data.blogId);
+    const blog = postsRepository.findPostById(data.blogId);
 
     if (blog) {
       const newPost: PostsInterface = {
@@ -27,7 +27,8 @@ export const postsRepository = {
         shortDescription: data.shortDescription,
         content: data.content,
         blogId: data.blogId,
-        blogName: blog.name
+        blogName: blog.blogName,
+        createdAt: new Date().toISOString()
       };
 
       posts.push(newPost);
@@ -38,7 +39,7 @@ export const postsRepository = {
     }
   },
 
-  updatePost: (id: string, data: PostUpdateInterface) => {
+  updatePost (id: string, data: PostUpdateInterface) {
 
     const post = postsRepository.findPostById(id);
 
