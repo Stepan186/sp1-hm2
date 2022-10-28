@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 const uri = process.env.MONGO_URI
-// const uri = "mongodb+srv://stepan:test@test.nzcc6xg.mongodb.net/?retryWrites=true&w=majority"
+
 if (!uri) {
   throw Error('mongo uri error')
 }
