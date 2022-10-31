@@ -1,28 +1,28 @@
 import { v4 } from "uuid";
 import { blogsCollection } from "../../db";
-import { ObjectId } from "mongodb";
 
 export const blogsRepository = {
 
   async findBlogById (id: string): Promise<BlogInterface | null> {
 
-    const blog: BlogInterface | null = await blogsCollection.findOne({id: id})
+    const blog = await blogsCollection.findOne({id: id})
 
     if (blog) {
-      return blog;
+     return {id: blog.id, name: blog.name, youtubeUrl: blog.youtubeUrl}
     } else {
       return null
     }
   },
 
   async findBlogs (): Promise<BlogInterface[]> {
-    return await blogsCollection.find().toArray()
+    let blogs = await blogsCollection.find().toArray()
+    return blogs.map((v) => {return { id: v.id, name: v.name, youtubeUrl: v.youtubeUrl }})
   },
 
  async createBlog (data: BlogCreateInterface) : Promise<BlogInterface> {
-    const newBlog = { id: v4(), name: data.name, youtubeUrl: data.youtubeUrl, createdAt: new Date().toString()};
+    const newBlog = { id: v4(), name: data.name, youtubeUrl: data.youtubeUrl};
     await blogsCollection.insertOne(newBlog)
-    return newBlog
+    return {id: newBlog.id, name: newBlog.name, youtubeUrl: newBlog.youtubeUrl}
 
   },
 
