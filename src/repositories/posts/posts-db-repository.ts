@@ -1,6 +1,7 @@
-import { postsCollection } from "../../db";
+import { blogsCollection, postsCollection } from "../../db";
 import { ObjectId } from "mongodb";
 import { v4 } from "uuid";
+import { blogsRepository } from "../blogs/blogs-db-repository";
 
 
 export const postsRepository = {
@@ -14,7 +15,8 @@ export const postsRepository = {
         blogName: v.blogName,
         content: v.content,
         title: v.title,
-        shortDescription: v.shortDescription
+        shortDescription: v.shortDescription,
+        createdAt: v.createdAt
       };
     });
   },
@@ -29,40 +31,55 @@ export const postsRepository = {
         shortDescription: post.shortDescription,
         content: post.content,
         blogId: post.blogId,
-        blogName: post.blogName
+        blogName: post.blogName,
+        createdAt: post.createdAt
       };
     } else {
       return null
     }
     },
 
-  async createPost(data: PostsInterface): Promise<PostsInterface> {
+  async createPost(data: PostsInterface): Promise<PostsInterface | null> {
 
-    const newPost: PostsInterface = {
-      id: v4(),
-      title: data.title,
-      shortDescription: data.shortDescription,
-      content: data.content,
-      blogId: data.blogId,
-      blogName: data.blogName,
-    };
+    const blog: BlogInterface | null = await blogsRepository.findBlogById(data.blogId)
 
-    const post = await postsCollection.insertOne(newPost);
-    return {
-      id: newPost.id,
-      title: newPost.title,
-      shortDescription: newPost.shortDescription,
-      content: newPost.content,
-      blogId: newPost.blogId,
-      blogName: newPost.blogName
-    };
+    if (blog) {
+      const newPost: PostsInterface = {
+        id: v4(),
+        title: data.title,
+        shortDescription: data.shortDescription,
+        content: data.content,
+        blogId: data.blogId,
+        blogName: blog?.name,
+        createdAt: new Date().toDateString()
+      };
+
+      const post = await postsCollection.insertOne(newPost);
+      return {
+        id: newPost.id,
+        title: newPost.title,
+        shortDescription: newPost.shortDescription,
+        content: newPost.content,
+        blogId: newPost.blogId,
+        blogName: newPost.blogName,
+        createdAt: newPost.createdAt
+      };
+    } else {
+      return null
+    }
 
   },
 
   async updatePost(id: string, data: PostUpdateInterface): Promise<boolean> {
 
-    const result = await postsCollection.updateOne({ id: id }, { ...data });
-    return result.matchedCount === 1;
+    const blog = await blogsRepository.findBlogById(data.blogId)
+
+    if (blog) {
+      const result = await postsCollection.updateOne({ id: id }, { ...data });
+      return result.matchedCount === 1;
+    } else {
+      return false
+    }
 
   },
 
