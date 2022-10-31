@@ -75,7 +75,7 @@ export const postsRepository = {
     const blog = await blogsRepository.findBlogById(data.blogId)
 
     if (blog) {
-      const result = await postsCollection.updateOne({ id: id }, { ...data });
+      const result = await postsCollection.updateOne({ id: id }, {$set: {...data, blogName: blog.name}});
       return result.matchedCount === 1;
     } else {
       return false
