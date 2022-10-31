@@ -20,7 +20,7 @@ export const blogsRepository = {
   },
 
   async createBlog(data: BlogCreateInterface): Promise<BlogInterface> {
-    const newBlog = { id: v4(), name: data.name, youtubeUrl: data.youtubeUrl, createdAt: new Date().toDateString() };
+    const newBlog = { id: v4(), name: data.name, youtubeUrl: data.youtubeUrl, createdAt: new Date().toISOString()};
     await blogsCollection.insertOne(newBlog);
     return { id: newBlog.id, name: newBlog.name, youtubeUrl: newBlog.youtubeUrl, createdAt: newBlog.createdAt}
 

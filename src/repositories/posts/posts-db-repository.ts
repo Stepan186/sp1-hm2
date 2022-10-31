@@ -51,7 +51,7 @@ export const postsRepository = {
         content: data.content,
         blogId: data.blogId,
         blogName: blog?.name,
-        createdAt: new Date().toDateString()
+        createdAt: new Date().toISOString()
       };
 
       const post = await postsCollection.insertOne(newPost);
@@ -84,7 +84,7 @@ export const postsRepository = {
   },
 
   async deletePost(id: string): Promise<boolean> {
-    const result = await postsCollection.deleteOne({ _id: new ObjectId(id) });
+    const result = await postsCollection.deleteOne({ id: id });
     return result.deletedCount === 1;
   }
 };
