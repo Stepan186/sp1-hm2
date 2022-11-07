@@ -6,6 +6,7 @@ import {
   PostDbInterface,
   PostsInterface
 } from "../../utilities/interfaces/posts/posts-interface";
+import { ObjectId } from "mongodb";
 
 
 export const postsRepository = {
@@ -46,7 +47,7 @@ export const postsRepository = {
     const blog = await blogsQueryRepository.findBlogById(data.blogId)
 
     if (blog) {
-      const result = await postsCollection.updateOne({ id: id }, {$set: {...data, blogName: blog.name}});
+      const result = await postsCollection.updateOne({ _id: new ObjectId(id)  }, {$set: {...data, blogName: blog.name}});
       return result.matchedCount === 1;
     } else {
       return false
@@ -55,7 +56,7 @@ export const postsRepository = {
   },
 
   async deletePost(id: string): Promise<boolean> {
-    const result = await postsCollection.deleteOne({ id: id });
+    const result = await postsCollection.deleteOne({ _id: new ObjectId(id) });
     return result.deletedCount === 1;
   },
 

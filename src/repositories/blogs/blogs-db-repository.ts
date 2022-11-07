@@ -1,5 +1,6 @@
 import { blogsCollection } from "../../db";
 import { BlogInterface, IBlogDb } from "../../utilities/interfaces/blogs/blog-interface";
+import { ObjectId } from "mongodb";
 
 
 
@@ -13,12 +14,12 @@ export const blogsRepository = {
   },
 
  async updateBlog (id: string, data: BlogUpdateInterface): Promise<boolean> {
-    const result = await blogsCollection.updateOne({id: id}, {$set: {...data}})
+    const result = await blogsCollection.updateOne({_id: new ObjectId(id)}, {$set: {...data}})
     return result.matchedCount === 1
   },
 
   async deleteBlog(id: string): Promise<boolean> {
-    const result = await blogsCollection.deleteOne({id: id})
+    const result = await blogsCollection.deleteOne({_id: new ObjectId(id)})
     return result.deletedCount === 1
   }
 };
