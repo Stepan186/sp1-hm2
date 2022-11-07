@@ -1,51 +1,22 @@
-import { blogsCollection, postsCollection } from "../../db";
-import { ObjectId } from "mongodb";
-import { v4 } from "uuid";
-import { blogsRepository } from "../blogs/blogs-db-repository";
+import { postsCollection } from "../../db";
+import { blogsQueryRepository } from "../blogs/blogs-query-repository";
+import { BlogInterface } from "../../utilities/interfaces/blogs/blog-interface";
+import {
+  CreatePostForBlogInterface, CreatePostInterface,
+  PostDbInterface,
+  PostsInterface
+} from "../../utilities/interfaces/posts/posts-interface";
 
 
 export const postsRepository = {
 
-  async findPosts(): Promise<PostsInterface[]> {
-    const posts = await postsCollection.find().toArray();
-    return posts.map((v) => {
-      return {
-        id: v.id,
-        blogId: v.blogId,
-        blogName: v.blogName,
-        content: v.content,
-        title: v.title,
-        shortDescription: v.shortDescription,
-        createdAt: v.createdAt
-      };
-    });
-  },
 
+  async createPost(data: CreatePostInterface): Promise<PostsInterface | null> {
 
-  async findPostById(id: string): Promise<PostsInterface|null> {
-    const post: PostsInterface | null = await postsCollection.findOne({ id: id });
-    if (post) {
-      return {
-        id: post.id,
-        title: post.title,
-        shortDescription: post.shortDescription,
-        content: post.content,
-        blogId: post.blogId,
-        blogName: post.blogName,
-        createdAt: post.createdAt
-      };
-    } else {
-      return null
-    }
-    },
-
-  async createPost(data: PostsInterface): Promise<PostsInterface | null> {
-
-    const blog: BlogInterface | null = await blogsRepository.findBlogById(data.blogId)
+    const blog: BlogInterface | null = await blogsQueryRepository.findBlogById(data.blogId)
 
     if (blog) {
-      const newPost: PostsInterface = {
-        id: v4(),
+      const newPost: PostDbInterface = {
         title: data.title,
         shortDescription: data.shortDescription,
         content: data.content,
@@ -54,9 +25,9 @@ export const postsRepository = {
         createdAt: new Date().toISOString()
       };
 
-      const post = await postsCollection.insertOne(newPost);
+      const result = await postsCollection.insertOne(newPost);
       return {
-        id: newPost.id,
+        id: result.insertedId.toString(),
         title: newPost.title,
         shortDescription: newPost.shortDescription,
         content: newPost.content,
@@ -72,7 +43,7 @@ export const postsRepository = {
 
   async updatePost(id: string, data: PostUpdateInterface): Promise<boolean> {
 
-    const blog = await blogsRepository.findBlogById(data.blogId)
+    const blog = await blogsQueryRepository.findBlogById(data.blogId)
 
     if (blog) {
       const result = await postsCollection.updateOne({ id: id }, {$set: {...data, blogName: blog.name}});
@@ -86,5 +57,27 @@ export const postsRepository = {
   async deletePost(id: string): Promise<boolean> {
     const result = await postsCollection.deleteOne({ id: id });
     return result.deletedCount === 1;
+  },
+
+  async createPostForBlog(data: CreatePostForBlogInterface, blog: BlogInterface): Promise<PostsInterface> {
+    const newPost: PostDbInterface = {
+      title: data.title,
+      shortDescription: data.shortDescription,
+      content: data.content,
+      blogId: blog.id,
+      blogName: blog.name,
+      createdAt: new Date().toISOString()
+    };
+
+    const result = await postsCollection.insertOne(newPost)
+    return {
+      id: result.insertedId.toString(),
+      title: newPost.title,
+      shortDescription: newPost.shortDescription,
+      content: newPost.content,
+      blogId: newPost.blogId,
+      blogName: newPost.blogName,
+      createdAt: newPost.createdAt
+    };
   }
 };

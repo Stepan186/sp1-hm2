@@ -8,3 +8,6 @@ testingRouter.delete("/all-data", async (req: Request, res: Response) => {
   await blogsCollection.deleteMany({})
   res.sendStatus(204);
 });
+
+
+

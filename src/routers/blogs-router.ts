@@ -5,18 +5,35 @@ import {
   youtubeUrlValidator
 } from "../middlewares/blogs-middleware";
 import { authMiddleware } from "../middlewares/auth-middleware";
-import { blogsRepository } from "../repositories/blogs/blogs-db-repository";
+import { BlogInterface, IBlogView } from "../utilities/interfaces/blogs/blog-interface";
+import { blogsQueryRepository, orderByType, paginationType } from "../repositories/blogs/blogs-query-repository";
+import { blogsServices } from "../services/blogs-services";
+import { CreatePostForBlogInterface } from "../utilities/interfaces/posts/posts-interface";
+import { BlogsResponseInterface } from "../utilities/interfaces/blogs/blogs-response-interface";
 
 export const blogsRouter = Router({});
 
-blogsRouter.get("/", async (req: Request, res: Response) => {
-  const blogs = await blogsRepository.findBlogs();
+blogsRouter.get("/", async(req: Request, res: Response) => {
+
+  const searchNameTerm: string | null = req.query.searchNameTerm ? String(req.query.searchNameTerm) : null
+
+  const pagination: paginationType = {
+    pageNumber: req.query.pageNumber ? Number(req.query.pageNumber) : 1,
+    pageSize: req.query.pageSize ? Number(req.query.pageSize) : 10
+  };
+
+  const orderBy: orderByType = {
+    sortBy: req.query.sortBy ? String(req.query.sortBy) : "createdAt",
+    sortDirection: String(req.query.sortDirection) === "asc" ? "asc" : "desc"
+  };
+
+  const blogs: BlogsResponseInterface = await blogsQueryRepository.findBlogs(pagination, orderBy, searchNameTerm);
   res.send(blogs);
 });
 
-blogsRouter.get("/:id", async (req: Request, res: Response) => {
+blogsRouter.get("/:id", async(req: Request, res: Response) => {
 
-  const blog = await blogsRepository.findBlogById(req.params.id);
+  const blog = await blogsQueryRepository.findBlogById(req.params.id);
 
   if (blog) {
     res.send(blog);
@@ -26,15 +43,15 @@ blogsRouter.get("/:id", async (req: Request, res: Response) => {
 
 });
 
-blogsRouter.post("/", authMiddleware, nameValidator, youtubeUrlValidator, inputValidatorMiddleware, async (req: Request, res: Response) => {
+blogsRouter.post("/", authMiddleware, nameValidator, youtubeUrlValidator, inputValidatorMiddleware, async(req: Request, res: Response) => {
   const data = req.body;
-  const newBlog = await blogsRepository.createBlog(data);
+  const newBlog: BlogInterface = await blogsServices.createBlog(data);
   res.status(201).send(newBlog);
 });
 
-blogsRouter.put("/:id", authMiddleware, nameValidator, youtubeUrlValidator, inputValidatorMiddleware, async (req: Request, res: Response) => {
+blogsRouter.put("/:id", authMiddleware, nameValidator, youtubeUrlValidator, inputValidatorMiddleware, async(req: Request, res: Response) => {
   const data = req.body;
-  const isUpdated = await blogsRepository.updateBlog(req.params.id, data);
+  const isUpdated = await blogsServices.updateBlog(req.params.id, data);
   if (isUpdated) {
     res.send(204);
   } else {
@@ -42,12 +59,35 @@ blogsRouter.put("/:id", authMiddleware, nameValidator, youtubeUrlValidator, inpu
   }
 });
 
-blogsRouter.delete("/:id", authMiddleware, async (req: Request, res: Response) => {
-  const isDeleted = await blogsRepository.deleteBlog(req.params.id);
+blogsRouter.delete("/:id", authMiddleware, async(req: Request, res: Response) => {
+  const isDeleted = await blogsServices.deleteBlog(req.params.id);
   if (isDeleted) {
     res.send(204);
   } else {
     res.send(404);
   }
+});
+
+blogsRouter.get("/:blogId/posts", async(req: Request, res: Response) => {
+
+  let pagination: paginationType = {
+    pageNumber: req.query.pageNumber ? Number(req.query.pageNumber) : 1,
+    pageSize: req.query.pageSize ? Number(req.query.pageSize) : 10
+  };
+
+  const orderBy: orderByType = {
+    sortBy: req.query.sortBy ? String(req.query.sortBy) : "createdAt",
+    sortDirection: String(req.query.sortDirection) === "asc" ? "asc" : "desc"
+  };
+
+  const posts = await blogsServices.getPostsForBlog(pagination, orderBy, req.params.blogId);
+  res.status(200).send(posts)
+});
+
+
+blogsRouter.post("/:blogId/posts", async(req: Request, res: Response) => {
+  const data: CreatePostForBlogInterface = req.body;
+  const post = await blogsServices.createPostForBlog(req.params.blogId, data);
+  res.status(201).send(post);
 });
 

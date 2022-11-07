@@ -8,16 +8,30 @@ import {
 } from "../middlewares/posts-middleware";
 import { inputValidatorMiddleware } from "../middlewares/blogs-middleware";
 import { postsRepository } from "../repositories/posts/posts-db-repository";
+import { postsQueryRepository } from "../repositories/posts/posts-query-repository";
+import { CreatePostInterface } from "../utilities/interfaces/posts/posts-interface";
+import { orderByType, paginationType } from "../repositories/blogs/blogs-query-repository";
 
 export const postsRouter = Router({});
 
 postsRouter.get("/", async(req: Request, res: Response) => {
-  const posts = await postsRepository.findPosts();
+
+  let pagination: paginationType = {
+    pageNumber: req.query.pageNumber ? Number(req.query.pageNumber) : 1,
+    pageSize: req.query.pageSize ? Number(req.query.pageSize) : 10
+  };
+
+  const orderBy: orderByType = {
+    sortBy: req.query.sortBy ? String(req.query.sortBy) : "createdAt",
+    sortDirection: String(req.query.sortDirection) === "asc" ? "asc" : "desc"
+  };
+
+  const posts = await postsQueryRepository.findPosts(pagination, orderBy);
   res.send(posts);
 });
 
 postsRouter.get("/:id", async (req: Request, res: Response) => {
-  const post = await postsRepository.findPostById(req.params.id);
+  const post = await postsQueryRepository.findPostById(req.params.id);
 
   if (post) {
     res.send(post);
@@ -28,7 +42,7 @@ postsRouter.get("/:id", async (req: Request, res: Response) => {
 
 postsRouter.post("/", authMiddleware, titileValidation,
   shortDescriptionValidation, contentValidation, blogIdValidation, inputValidatorMiddleware,async (req: Request, res: Response) => {
-    const data: PostsInterface = req.body;
+    const data: CreatePostInterface = req.body;
     const newPost = await postsRepository.createPost(data);
 
     if (newPost) {

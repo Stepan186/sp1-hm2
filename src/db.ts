@@ -1,5 +1,7 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 import * as dotenv from 'dotenv'
+import { IBlogDb } from "./utilities/interfaces/blogs/blog-interface";
+import { PostDbInterface } from "./utilities/interfaces/posts/posts-interface";
 dotenv.config()
 
 const uri = process.env.MONGO_URI
@@ -10,8 +12,8 @@ if (!uri) {
 
 const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
 const db = client.db('incubator')
-export const blogsCollection = db.collection<BlogInterface>("blogs")
-export const postsCollection = db.collection<PostsInterface>("posts")
+export const blogsCollection = db.collection<IBlogDb>("blogs")
+export const postsCollection = db.collection<PostDbInterface>("posts")
 
 export async function runDb() {
   try {
