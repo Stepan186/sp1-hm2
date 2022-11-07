@@ -96,7 +96,7 @@ blogsRouter.get("/:blogId/posts", async(req: Request, res: Response) => {
 
 
 blogsRouter.post("/:blogId/posts", authMiddleware, titileValidation,
-  shortDescriptionValidation, contentValidation, blogIdValidation, async(req: Request, res: Response) => {
+  shortDescriptionValidation, contentValidation,inputValidatorMiddleware, async(req: Request, res: Response) => {
   const data: CreatePostForBlogInterface = req.body;
   const post = await blogsServices.createPostForBlog(req.params.blogId, data);
   if (post) {

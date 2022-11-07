@@ -36,16 +36,19 @@ export const blogsQueryRepository = {
     }
     let blogs: BlogDb[] = await blogsCollection.find(query).skip(pagination.pageNumber * pagination.pageSize - pagination.pageSize)
       .limit(pagination.pageSize).sort({ [orderBy.sortBy]: orderBy.sortDirection }).toArray();
-    const totalCount: number = await blogsCollection.countDocuments();
+    const totalCount: number = await blogsCollection.countDocuments({query});
     return transformBlogsResponse(blogs, pagination, totalCount);
 
 
   },
 
   async findPostsForBlog (pagination: paginationType, blogId: string, orderBy: orderByType): Promise<PostsResponseInteface> {
+
     const posts: PostDb[] = await postsCollection.find({blogId: blogId}).skip(pagination.pageNumber * pagination.pageSize - pagination.pageSize)
       .limit(pagination.pageSize).sort({[orderBy.sortBy]: orderBy.sortDirection}).toArray()
+
     const totalCount = await postsCollection.countDocuments({blogId: blogId})
+
     return transfromPostsForResponse(posts, pagination, totalCount)
   }
 }
