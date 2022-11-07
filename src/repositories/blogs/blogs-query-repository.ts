@@ -36,7 +36,7 @@ export const blogsQueryRepository = {
     }
     let blogs: BlogDb[] = await blogsCollection.find(query).skip(pagination.pageNumber * pagination.pageSize - pagination.pageSize)
       .limit(pagination.pageSize).sort({ [orderBy.sortBy]: orderBy.sortDirection }).toArray();
-    const totalCount: number = await blogsCollection.countDocuments({query});
+    const totalCount: number = await blogsCollection.countDocuments(query);
     return transformBlogsResponse(blogs, pagination, totalCount);
 
 
