@@ -23,7 +23,7 @@ export const blogsServices = {
   createPostForBlog: async(blogId: string, data: CreatePostForBlogInterface) => {
     const blog: BlogInterface|null = await blogsQueryRepository.findBlogById(blogId);
     if (blog) {
-      const post = postsRepository.createPostForBlog(data, blog);
+     return await postsRepository.createPostForBlog(data, blog);
     }
   },
 
