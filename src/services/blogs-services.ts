@@ -3,7 +3,7 @@ import { BlogInterface } from "../utilities/interfaces/blogs/blog-interface";
 import { blogsQueryRepository, orderByType, paginationType } from "../repositories/blogs/blogs-query-repository";
 import { postsRepository } from "../repositories/posts/posts-db-repository";
 import {
-  CreatePostForBlogInterface, PostsResponseInteface
+  CreatePostForBlogInterface, PostsInterface, PostsResponseInteface
 } from "../utilities/interfaces/posts/posts-interface";
 
 export const blogsServices = {
@@ -20,14 +20,20 @@ export const blogsServices = {
     return blogsRepository.deleteBlog(id);
   },
 
-  createPostForBlog: async(blogId: string, data: CreatePostForBlogInterface) => {
+  createPostForBlog: async(blogId: string, data: CreatePostForBlogInterface): Promise<PostsInterface | boolean> => {
     const blog: BlogInterface|null = await blogsQueryRepository.findBlogById(blogId);
     if (blog) {
      return await postsRepository.createPostForBlog(data, blog);
     }
+    return false
   },
 
-  getPostsForBlog: async(pagination: paginationType, orderBy: orderByType, blogId: string): Promise<PostsResponseInteface> => {
-    return await blogsQueryRepository.findPostsForBlog(pagination, blogId, orderBy);
+  getPostsForBlog: async(pagination: paginationType, orderBy: orderByType, blogId: string): Promise<PostsResponseInteface | boolean> => {
+
+    const blog = await blogsQueryRepository.findBlogById(blogId)
+    if (blog) {
+      return await blogsQueryRepository.findPostsForBlog(pagination, blogId, orderBy);
+    }
+    return false
   }
 };
