@@ -32,7 +32,7 @@ export const blogsQueryRepository = {
   async findBlogs(pagination: paginationType, orderBy: orderByType, searchNameTerm: string | null): Promise<BlogsResponseInterface> {
     let query = {}
     if (searchNameTerm) {
-      query = {name: {$regex: searchNameTerm}}
+      query = {name: {$regex: searchNameTerm, $options: 'i'}}
     }
     let blogs: BlogDb[] = await blogsCollection.find(query).skip(pagination.pageNumber * pagination.pageSize - pagination.pageSize)
       .limit(pagination.pageSize).sort({ [orderBy.sortBy]: orderBy.sortDirection }).toArray();
