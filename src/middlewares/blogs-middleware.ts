@@ -1,4 +1,4 @@
-import { body, param, validationResult } from "express-validator";
+import { body, validationResult } from "express-validator";
 import { NextFunction, Request, Response } from "express";
 
 export const nameValidator = body("name")
@@ -31,5 +31,3 @@ export const inputValidatorMiddleware = (req: Request, res: Response, next: Next
   }
 };
 
-
-export const idValidation = param('id').isLength({max: 5})

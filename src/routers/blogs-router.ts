@@ -10,6 +10,12 @@ import { blogsQueryRepository, orderByType, paginationType } from "../repositori
 import { blogsServices } from "../services/blogs-services";
 import { CreatePostForBlogInterface } from "../utilities/interfaces/posts/posts-interface";
 import { BlogsResponseInterface } from "../utilities/interfaces/blogs/blogs-response-interface";
+import {
+  blogIdValidation,
+  contentValidation,
+  shortDescriptionValidation,
+  titileValidation
+} from "../middlewares/posts-middleware";
 
 export const blogsRouter = Router({});
 
@@ -68,7 +74,7 @@ blogsRouter.delete("/:id", authMiddleware, async(req: Request, res: Response) =>
   }
 });
 
-blogsRouter.get("/:blogId/posts", async(req: Request, res: Response) => {
+blogsRouter.get("/:blogId/posts", blogIdValidation, async(req: Request, res: Response) => {
 
   let pagination: paginationType = {
     pageNumber: req.query.pageNumber ? Number(req.query.pageNumber) : 1,
@@ -85,7 +91,8 @@ blogsRouter.get("/:blogId/posts", async(req: Request, res: Response) => {
 });
 
 
-blogsRouter.post("/:blogId/posts", async(req: Request, res: Response) => {
+blogsRouter.post("/:blogId/posts", authMiddleware, titileValidation,
+  shortDescriptionValidation, contentValidation, blogIdValidation, async(req: Request, res: Response) => {
   const data: CreatePostForBlogInterface = req.body;
   const post = await blogsServices.createPostForBlog(req.params.blogId, data);
   res.status(201).send(post);
