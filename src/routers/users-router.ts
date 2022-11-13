@@ -36,7 +36,7 @@ usersRouter.get('/', authMiddleware, inputValidatorMiddleware, async (req: Reque
   res.status(200).send(users)
 })
 
-usersRouter.post('/', loginValidatiom, passwordValidatiom, emailValidation, inputValidatorMiddleware, async  (req: Request, res: Response) => {
+usersRouter.post('/',authMiddleware, loginValidatiom, passwordValidatiom, emailValidation, inputValidatorMiddleware, async  (req: Request, res: Response) => {
   const data = req.body
   const user = await usersServices.createUser(data)
   res.status(201).send(user)

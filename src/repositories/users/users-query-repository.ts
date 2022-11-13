@@ -9,11 +9,11 @@ export const usersQueryRepository = {
     let query = {$or: []}
 
     if (searchLoginTerm) {
-      query.$or.push( { login:  {$regex: '^' + searchLoginTerm, $options: 'i'} } as never);
+      query.$or.push( { login:  {$regex: '^' + searchLoginTerm + '|' + '$' + searchLoginTerm, $options: 'i'} } as never);
     }
 
     if (searchEmailTerm) {
-      query.$or.push( { email:  {$regex: '^' + searchEmailTerm, $options: 'i'} } as never);
+      query.$or.push( { email:  {$regex: '^' + searchEmailTerm + '|' + '$' + searchLoginTerm, $options: 'i'} } as never);
     }
 
     const users = await userColletion.find(query.$or.length? query : {}).skip(pagination.pageNumber * pagination.pageSize - pagination.pageSize)
