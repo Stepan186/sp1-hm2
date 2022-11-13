@@ -18,6 +18,11 @@ export type orderByType = {
   sortDirection: 'asc' | 'desc'
 }
 
+export type searchTermType = {
+  searchLoginTerm: string | null
+  searchEmailTerm: string | null
+}
+
 export const blogsQueryRepository = {
   async findBlogById (id: string): Promise<BlogInterface | null> {
 
