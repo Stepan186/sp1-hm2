@@ -5,6 +5,7 @@ import { blogsRouter } from "./routers/blogs-router";
 import { postsRouter } from "./routers/posts-router";
 import { runDb } from "./db";
 import { usersRouter } from "./routers/users-router";
+import { authRouter } from './routers/auth-router';
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -16,6 +17,7 @@ app.use('/blogs', blogsRouter)
 app.use('/testing', testingRouter)
 app.use('/posts', postsRouter)
 app.use('/users', usersRouter)
+app.use('/auth', authRouter)
 
 
 

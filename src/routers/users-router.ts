@@ -9,6 +9,8 @@ import {
 import { usersQueryRepository } from '../repositories/users/users-query-repository';
 import { authMiddleware } from '../middlewares/auth-middleware';
 import { usersDbRepository } from '../repositories/users/users-db-repository';
+import { usersServices } from '../services/users-services';
+import { userColletion } from '../db';
 
 export const usersRouter = Router({})
 
@@ -36,7 +38,7 @@ usersRouter.get('/', authMiddleware, inputValidatorMiddleware, async (req: Reque
 
 usersRouter.post('/', loginValidatiom, passwordValidatiom, emailValidation, inputValidatorMiddleware, async  (req: Request, res: Response) => {
   const data = req.body
-  const user = await usersDbRepository.createUser(data)
+  const user = await usersServices.createUser(data)
   res.status(201).send(user)
 })
 
@@ -45,6 +47,12 @@ usersRouter.delete('/:userId', authMiddleware, inputValidatorMiddleware, async (
   const result = await usersDbRepository.deleteUser(req.params.userId)
   if (result) {
     res.sendStatus(204)
+    return
   }
   res.sendStatus(404)
+})
+
+usersRouter.get('/check',async (req: Request, res: Response) => {
+  const user = await userColletion.find().toArray()
+  res.send(user)
 })

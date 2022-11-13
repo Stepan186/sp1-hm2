@@ -1,5 +1,5 @@
 import { orderByType, paginationType } from '../blogs/blogs-query-repository';
-import { UsersResponseInterface } from '../../utilities/interfaces/users/user-interface';
+import { IUserDb, UsersResponseInterface } from '../../utilities/interfaces/users/user-interface';
 import { userColletion } from '../../db';
 import { usersMapping } from '../../mapping/users-mapping';
 
@@ -22,5 +22,10 @@ export const usersQueryRepository = {
 
     return usersMapping(users, pagination, totalCount);
 
+  },
+
+  findUserByLoginAndPas: async (hashPassword: string, login: string): Promise<boolean> => {
+    const user = await userColletion.findOne({ password: hashPassword, login: login})
+    return !!user;
   }
 }
